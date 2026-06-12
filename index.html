@@ -160,7 +160,55 @@
       padding-top: 60px;
       position: relative;
     }
-    .hero-content { max-width: 720px; }
+    .hero-inner {
+      display: flex;
+      align-items: center;
+      gap: 64px;
+      width: 100%;
+    }
+    .hero-content { max-width: 620px; flex: 1; }
+    .hero-photo-wrap {
+      flex-shrink: 0;
+      position: relative;
+    }
+    .hero-photo-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+      animation: rotateBorder 4s linear infinite;
+      z-index: 0;
+    }
+    .hero-photo-wrap::after {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,212,255,0.12), transparent 70%);
+      z-index: 0;
+      animation: orbFloat 6s ease-in-out infinite;
+    }
+    @keyframes rotateBorder {
+      0% { background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3)); }
+      33% { background: linear-gradient(225deg, var(--accent2), var(--accent3), var(--accent)); }
+      66% { background: linear-gradient(315deg, var(--accent3), var(--accent), var(--accent2)); }
+      100% { background: linear-gradient(405deg, var(--accent), var(--accent2), var(--accent3)); }
+    }
+    .hero-photo {
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center top;
+      position: relative;
+      z-index: 1;
+      border: 4px solid var(--bg);
+      display: block;
+    }
+    @media (max-width: 768px) {
+      .hero-inner { flex-direction: column-reverse; gap: 32px; }
+      .hero-photo { width: 150px; height: 150px; }
+    }
     .hero-badge {
       display: inline-flex;
       align-items: center;
@@ -735,6 +783,7 @@
 <!-- HERO -->
 <section id="hero">
   <div class="container">
+    <div class="hero-inner">
     <div class="hero-content">
       <div class="hero-badge">Elastic &amp; AI Search Specialist</div>
       <h1>
@@ -768,6 +817,10 @@
         <a href="#projects" class="btn btn-primary">&#9654; View Projects</a>
         <a href="#contact" class="btn btn-secondary">Get in Touch</a>
       </div>
+    </div>
+    <div class="hero-photo-wrap">
+      <img src="avatar.jpeg" alt="Prince Sharma" class="hero-photo" />
+    </div>
     </div>
   </div>
 </section>
