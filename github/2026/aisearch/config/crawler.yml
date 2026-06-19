@@ -1,0 +1,71 @@
+# Elastic Open Web Crawler config
+# Run: docker compose run crawler jruby bin/crawler crawl /home/app/config/crawler.yml
+# Docs: https://github.com/elastic/crawler/blob/main/docs/CONFIG.md
+
+# --- Output ---
+output_sink: elasticsearch        # console | file | elasticsearch
+output_index: <%= ENV['ES_INDEX'] || 'web-crawl' %>
+
+# --- Domains to crawl ---
+domains:
+  - url: <%= ENV['CRAWL_URL'] || 'https://example.com' %>
+    seed_urls:
+      - https://www.rijksoverheid.nl/vraag-en-antwoord
+    sitemaps:
+      - https://www.rijksoverheid.nl/sitemap.xml
+
+    # Allow only useful content — deny media/docs/videos
+    crawl_rules:
+      - policy: allow
+        type: begins
+        pattern: /vraag-en-antwoord
+      - policy: allow
+        type: begins
+        pattern: /themas
+      - policy: allow
+        type: begins
+        pattern: /onderwerpen
+      - policy: deny
+        type: begins
+        pattern: /documenten
+      - policy: deny
+        type: begins
+        pattern: /actueel/nieuws
+      - policy: deny
+        type: begins
+        pattern: /actueel/persberichten
+      - policy: deny
+        type: contains
+        pattern: /videos/
+      - policy: deny
+        type: contains
+        pattern: /geluidsfragmenten/
+      - policy: deny
+        type: contains
+        pattern: /nederlandse-gebarentaal
+
+# --- Crawler behavior ---
+max_crawl_depth: 3
+max_unique_url_count: 5000
+# max_url_length: 2048
+# max_url_segments: 20
+# max_url_params: 20
+
+threads_per_crawl: 5
+
+# --- Timeouts (seconds) ---
+# connection_timeout: 10
+# socket_timeout: 10
+# request_timeout: 60
+
+# --- Field size limits (bytes) ---
+# max_title_size: 1000
+# max_body_size: 5242880    # 5 MB
+# max_keywords_size: 512
+# max_url_size: 2048
+
+# --- Content extraction ---
+# extract_binary_content: false   # PDFs, Office docs
+
+# --- Logging ---
+log_level: debug

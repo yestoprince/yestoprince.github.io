@@ -1,0 +1,32 @@
+# Elasticsearch connection — Elastic Cloud Serverless
+# Get endpoint: Cloud console → project → Copy endpoint (Elasticsearch)
+# Get API key:  Cloud console → project → API Keys → Create
+# Use ERB for env vars: <%= ENV['VAR'] %>
+
+elasticsearch:
+  # Serverless endpoint includes scheme+host, no port needed
+  host: <%= ENV['ES_HOST'] %>
+
+  # API key auth (only supported auth for serverless)
+  api_key: <%= ENV['ES_API_KEY'] %>
+
+  # SSL is valid on Cloud — no custom certs needed
+  ssl_verify: true
+
+  # Client behavior
+  # request_timeout: 30
+  # compression: true   # recommended for Cloud to reduce bandwidth
+
+  # Bulk indexing
+  # bulk_api:
+  #   max_items: 10
+  #   max_size_bytes: 1048576
+
+  # Ingest pipeline (serverless: enable if you have ML inference)
+  # pipeline:
+  #   enabled: false
+  #   name: ent-search-generic-ingestion
+  #   params:
+  #     remove_extra_whitespace: false
+  #     run_ml_inference: false
+  #     extract_binary_content: true

@@ -1,0 +1,23 @@
+services:
+  crawler:
+    image: docker.elastic.co/integrations/crawler:${CRAWLER_VERSION:-latest}
+    container_name: crawler
+    volumes:
+      - ./config:/home/app/config
+      # - ./logs:/home/app/logs
+    networks:
+      - elastic
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env
+    environment:
+      _JAVA_OPTIONS: "-Djava.net.preferIPv4Stack=true"
+    # macOS M4 add: -XX:UseSVE=0
+
+networks:
+  elastic:
+    driver: bridge
+    # To attach to existing Elastic stack network, use external:
+    # external: true
+    # name: elastic
