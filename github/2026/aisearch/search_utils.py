@@ -1,6 +1,5 @@
 import os
 import json
-import requests
 from elasticsearch import Elasticsearch
 from dotenv import load_dotenv
 import streamlit as st
@@ -10,57 +9,15 @@ load_dotenv()
 ES_HOST = os.getenv("ES_HOST")
 ES_API_KEY = os.getenv("ES_API_KEY")
 ES_INDEX = os.getenv("ES_INDEX", "rijksoverheid-qa-v3")
-OLLAMA_URL = "http://localhost:11434"
-
-DUTCH_STOPWORDS = {
-    "de", "het", "een", "en", "van", "in", "is", "dat", "op", "te",
-    "voor", "met", "aan", "er", "zijn", "wordt", "ik", "hoe", "wat",
-    "wie", "waar", "wanneer", "waarom", "kan", "mag", "moet", "wil",
-    "mijn", "uw", "zijn", "haar", "ons", "hun", "dit", "die", "deze"
-}
-
 
 @st.cache_resource
 def get_es():
     return Elasticsearch(ES_HOST, api_key=ES_API_KEY)
 
 
-def is_dutch(text: str) -> bool:
-    words = set(text.lower().split())
-    return bool(words & DUTCH_STOPWORDS)
-
-
-def translate_to_dutch(text: str) -> str:
-    try:
-        resp = requests.post(
-            f"{OLLAMA_URL}/api/generate",
-            json={
-                "model": "qwen3:0.6b",
-                "prompt": (
-                    f"Translate the following text to Dutch. "
-                    f"Return ONLY the Dutch translation, nothing else. "
-                    f"No thinking, no explanation.\n\nText: {text}\n\nDutch:"
-                ),
-                "stream": False,
-                "options": {"num_ctx": 512, "temperature": 0}
-            },
-            timeout=15
-        )
-        result = resp.json().get("response", text).strip()
-        # strip any <think>...</think> tags qwen3 sometimes emits
-        if "<think>" in result:
-            result = result.split("</think>")[-1].strip()
-        return result if result else text
-    except Exception:
-        return text
-
-
 def resolve_query(query: str) -> tuple[str, str | None]:
-    """Returns (query_to_use, translated_nl) — translated_nl is None if already Dutch."""
-    if is_dutch(query):
-        return query, None
-    translated = translate_to_dutch(query)
-    return translated, translated
+    """multilingual-e5-small handles cross-lingual natively — no translation needed."""
+    return query, None
 
 
 def _bm25_retriever(query, fields):
